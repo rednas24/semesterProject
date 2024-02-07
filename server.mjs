@@ -27,6 +27,25 @@ server.get("/", (req, res, next) => {
     res.status(200).send(JSON.stringify({ msg: "These are not the droids...." })).end();
 });
 
+const messageCounts = {};
+
+// Middleware function to count messages
+function countMessages(req, res, next) {
+    const userId = req.user.id;
+
+    messageCounts[userId] = (messageCounts[userId] || 0) + 1;
+
+    // Continue with the request
+    next();
+}
+
+
+server.post("/send-message", countMessages, (req, res, next) => {
+    // Your message sending logic here
+    res.status(200).send("Message sent successfully");
+});
+
+
 // Start the server 
 server.listen(server.get('port'), function () {
     console.log('server running', server.get('port'));
